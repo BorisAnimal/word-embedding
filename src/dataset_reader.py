@@ -3,7 +3,6 @@ import pickle
 from datetime import datetime
 
 import nltk
-from keras.preprocessing.text import Tokenizer
 
 
 def save(obj, file):
@@ -36,14 +35,13 @@ def sentence2words_preprocessing(sentence: str, tokenizer=nltk.RegexpTokenizer(r
         return [word for word in words if word.isalpha()]
 
 
-def load_data(dataset_preprocessed, tokenizer_path):
-    tokenizer = load(tokenizer_path)
+def load_data(dataset_preprocessed):
     with open(dataset_preprocessed, 'r', encoding='utf-8') as d:
         corpus = d.readlines()
-    return corpus, tokenizer
+    return corpus
 
 
-def preprocessing(corpus_path, dataset_preprocessed_path, tokenizer_path):
+def preprocessing(corpus_path, dataset_preprocessed_path):
     start = datetime.now()
     # Read raw dataset
     with open(corpus_path, 'r', encoding='utf-8') as f:
@@ -54,30 +52,25 @@ def preprocessing(corpus_path, dataset_preprocessed_path, tokenizer_path):
     corpus = [" ".join(sentence2words_preprocessing(words)) for words in corpus]
     with open(dataset_preprocessed_path, 'w', encoding='utf-8') as d:
         d.write("\n".join(corpus))
-    # Feed corpus to tokenizer
-    tokenizer = Tokenizer(num_words=v_size, oov_token='UNK')
-    tokenizer.fit_on_texts(corpus)
-    save(tokenizer, tokenizer_path)
 
     print("Data processed in {} sec".format(datetime.now() - start))
-    return corpus, tokenizer
+    return corpus
 
 
 # Params
 v_size = 50000
 corpus_path = "data/eng_wikipedia_2007_1M-sentences.txt"
-tokenizer_path = "data/tokenizer.pkl"
 dataset_preprocessed_path = "data/clean_corpus.txt"
 
 
 def main():
-    if os.path.exists(tokenizer_path) and os.path.exists(dataset_preprocessed_path):
-        corpus, tokenizer = load_data(dataset_preprocessed_path, tokenizer_path)
+    if os.path.exists(dataset_preprocessed_path):
+        corpus = load_data(dataset_preprocessed_path)
         print('Existed dataset was loaded')
     else:
         print("Processing dataset...")
-        corpus, tokenizer = preprocessing(corpus_path, dataset_preprocessed_path, tokenizer_path)
-    return corpus, tokenizer
+        corpus = preprocessing(corpus_path, dataset_preprocessed_path)
+    return corpus
 
 
 if __name__ == '__main__':
