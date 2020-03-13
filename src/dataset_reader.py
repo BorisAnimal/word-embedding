@@ -14,10 +14,6 @@ def load(file):
     return pickle.load(open(file, "rb"))
 
 
-## Taken from tutorial:
-# https://towardsdatascience.com/light-on-math-ml-intuitive-guide-to-understanding-glove-embeddings-b13b4f19c010
-## With open source:
-# https://github.com/thushv89/exercises_thushv_dot_com/blob/master/glove_light_on_math_ml/glove_light_on_math_ml.ipynb
 
 def get_clean_corpus(raw_corpus: list):  # , reference_pattern=r"\[[0-9]+\]"):
     """
